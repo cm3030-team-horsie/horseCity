@@ -1,0 +1,62 @@
+# ========== Unity Generated Files ==========
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+MemoryCaptures/
+
+# ========== Asset meta files ==========
+# (DO NOT ignore *.meta – Unity needs them for serialization)
+
+# ========== OS/System Files ==========
+.DS_Store
+Thumbs.db
+
+# ========== Rider/VS/VSCode ==========
+.vscode/
+.idea/
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+
+# ========== Unity Cache and Packages ==========
+[Uu]serSettings/
+Library/
+Logs/
+obj/
+Temp/
+Packages/manifest.json
+Packages/packages-lock.json
+
+# ========== Builds ==========
+*.apk
+*.aab
+*.app
+*.exe
+*.zip
+*.tar.gz
+
+# ========== Crash and Debug Reports ==========
+*.stacktrace
+
+# ========== Unity Collaborate ==========
+.collab/
+
+# ========== Shader Cache ==========
+*.shadercache
+*.giparams
+*.gi
+
+# ========== Android Native Plugin Files ==========
+*.aar
+*.jar
+
+# ========== Visual Studio Code Workspace ==========
+*.code-workspace
