@@ -1,7 +1,10 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(MeshFilter), typeof(MeshRenderer), typeof(RoadSpline))]
+[RequireComponent(typeof(MeshFilter))]
+[RequireComponent(typeof(MeshRenderer))]
+[RequireComponent(typeof(MeshCollider))]
+[RequireComponent(typeof(RoadSpline))]
 public class RoadMeshGenerator : MonoBehaviour
 {
     public float width = 2f;
@@ -87,6 +90,7 @@ public class RoadMeshGenerator : MonoBehaviour
         mesh.normals = normals;
 
         GetComponent<MeshFilter>().mesh = mesh;
+        GetComponent<MeshCollider>().sharedMesh = mesh;
     }
 
     // Gizmo for rendering vertex normals
