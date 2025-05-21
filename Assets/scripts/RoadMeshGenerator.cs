@@ -58,12 +58,12 @@ public class RoadMeshGenerator : MonoBehaviour
                 {
                     int baseIndex = verts.Count - 4;
                     tris.Add(baseIndex + 0);
-                    tris.Add(baseIndex + 2);
                     tris.Add(baseIndex + 1);
+                    tris.Add(baseIndex + 2);
 
                     tris.Add(baseIndex + 2);
-                    tris.Add(baseIndex + 3);
                     tris.Add(baseIndex + 1);
+                    tris.Add(baseIndex + 3);
                 }
 
                 totalLength += (pos - prevPos).magnitude;
@@ -71,12 +71,42 @@ public class RoadMeshGenerator : MonoBehaviour
             }
         }
 
+        Vector3[] normals = new Vector3[verts.Count];
+        for (int i = 0; i < normals.Length; i++)
+        {
+            // Make all vertex normals point straight up.
+            normals[i] = Vector3.up;
+        }
+
         Mesh mesh = new Mesh();
         mesh.SetVertices(verts);
         mesh.SetUVs(0, uvs);
         mesh.SetTriangles(tris, 0);
-        mesh.RecalculateNormals();
+        // mesh.RecalculateNormals();
+        // mesh.SetNormals(normals);
+        mesh.normals = normals;
 
         GetComponent<MeshFilter>().mesh = mesh;
+    }
+
+    // Gizmo for rendering vertex normals
+    void OnDrawGizmos()
+    {
+        MeshFilter meshFilter = GetComponent<MeshFilter>();
+        if (meshFilter == null || meshFilter.sharedMesh == null)
+            return;
+
+        var mesh = meshFilter.sharedMesh;
+        var verts = mesh.vertices;
+        var normals = mesh.normals;
+
+        for (int i = 0; i < verts.Length; i++)
+        {
+            Vector3 worldPos = transform.TransformPoint(verts[i]);
+            Vector3 worldNormal = transform.TransformDirection(normals[i]);
+
+            Gizmos.color = Color.green;
+            Gizmos.DrawLine(worldPos, worldPos + worldNormal * 0.2f);
+        }
     }
 }
