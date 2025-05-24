@@ -4,7 +4,7 @@
 public class PlayerTracking : MonoBehaviour
 {
     public Transform player;
-    private Vector3 offset = new Vector3(8f, 8f, -8f);
+    private Vector3 offset = new Vector3(16f, 16f, -16f);
 
     private Camera cam;
 
