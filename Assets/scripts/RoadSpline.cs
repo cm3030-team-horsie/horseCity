@@ -13,7 +13,7 @@ public class RoadSpline : MonoBehaviour
     {
         if (controlPoints.Count < 4) return;
 
-        Gizmos.color = Color.green;
+        Gizmos.color = Color.blue;
 
         for (int i = 0; i <= controlPoints.Count - 4; i += 3)
         {

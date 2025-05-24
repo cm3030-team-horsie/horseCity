@@ -109,7 +109,7 @@ public class RoadMeshGenerator : MonoBehaviour
             Vector3 worldPos = transform.TransformPoint(verts[i]);
             Vector3 worldNormal = transform.TransformDirection(normals[i]);
 
-            Gizmos.color = Color.green;
+            Gizmos.color = Color.blue;
             Gizmos.DrawLine(worldPos, worldPos + worldNormal * 0.2f);
         }
     }
