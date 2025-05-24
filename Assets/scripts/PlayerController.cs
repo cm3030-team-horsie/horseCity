@@ -9,7 +9,7 @@ public class PlayerController : MonoBehaviour
 
     private bool isPlaying = false;
 
-    [SerializeField] private float moveSpeed = 5f;
+    [SerializeField] private float moveSpeed = 15f;
 
     private void Awake()
     {
