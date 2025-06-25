@@ -22,11 +22,21 @@ public class GameManager : MonoBehaviour
     }
 
     // Unity lifecycle method. Automatically called when script- or game object is disabled
+    //private void OnDisable()
+    //{
+    //    inputActions.Gameplay.BreakOut.performed -= OnBreakOutPerformed;
+    //    inputActions.Disable();
+    //}
+
     private void OnDisable()
     {
-        inputActions.Gameplay.BreakOut.performed -= OnBreakOutPerformed;
-        inputActions.Disable();
+        if (inputActions != null)
+        {
+            inputActions.Gameplay.BreakOut.performed -= OnBreakOutPerformed;
+            inputActions.Disable();
+        }
     }
+
 
     private void OnBreakOutPerformed(InputAction.CallbackContext context)
     {
