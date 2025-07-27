@@ -512,7 +512,8 @@ PlayerSettings:
   webGLLinkerTarget: 1
   webGLThreadsSupport: 0
   webGLWasmStreaming: 0
-  scriptingDefineSymbols: {}
+  scriptingDefineSymbols:
+    1: EASYROADS3D_PRO
   platformArchitecture: {}
   scriptingBackend: {}
   il2cppCompilerConfiguration: {}
