@@ -4,7 +4,7 @@
 public class PlayerTracking : MonoBehaviour
 {
     public Transform player;
-    private Vector3 offset = new Vector3(16f, 16f, -16f);
+    private Vector3 offset = new Vector3(0f, 5.5f, -8f);
 
     private Camera cam;
 
@@ -12,10 +12,9 @@ public class PlayerTracking : MonoBehaviour
     {
         cam = GetComponent<Camera>();
 
-        cam.orthographic = true;
-        cam.orthographicSize = 10f;
+        cam.orthographic = false;
 
-        transform.rotation = Quaternion.Euler(30f, -45f, 0f);
+        transform.rotation = Quaternion.Euler(30f, 0f, 0f);
     }
 
     private void LateUpdate()

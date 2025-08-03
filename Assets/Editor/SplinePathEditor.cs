@@ -1,13 +1,13 @@
-﻿#if UNITY_EDITOR
+#if UNITY_EDITOR
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(RoadSpline))]
-public class RoadSplineEditor : Editor
+[CustomEditor(typeof(SplinePath))]
+public class SplinePathEditor : Editor
 {
     void OnSceneGUI()
     {
-        RoadSpline spline = (RoadSpline)target;
+        SplinePath spline = (SplinePath)target;
 
         for (int i = 0; i < spline.controlPoints.Count; i++)
         {
@@ -26,7 +26,7 @@ public class RoadSplineEditor : Editor
     {
         DrawDefaultInspector();
 
-        RoadSpline spline = (RoadSpline)target;
+        SplinePath spline = (SplinePath)target;
 
         GUILayout.Space(10);
         if (GUILayout.Button("Add Point"))
