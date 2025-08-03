@@ -12,7 +12,6 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float heightOffset = 5.5f;
     [SerializeField] private float followSpeed = 5f;
     [SerializeField] private float rotationSpeed = 3f;
-    [SerializeField] private float fixedAngleX = 30f;
 
     private Camera cam;
     private bool isFollowing = false;
