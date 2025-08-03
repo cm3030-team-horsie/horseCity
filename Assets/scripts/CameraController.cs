@@ -8,7 +8,8 @@ public class CameraController : MonoBehaviour
     public Transform player;
 
     [Header("Camera Settings")]
-    [SerializeField] private Vector3 followOffset = new Vector3(0f, 5.5f, -8f);
+    [SerializeField] private float followDistance = 8f;
+    [SerializeField] private float heightOffset = 5.5f;
     [SerializeField] private float followSpeed = 5f;
     [SerializeField] private float rotationSpeed = 3f;
     [SerializeField] private float fixedAngleX = 30f;
@@ -74,11 +75,24 @@ public class CameraController : MonoBehaviour
     {
         if (!isFollowing || player == null) return;
 
-        Vector3 targetPosition = player.position + followOffset;
+        Vector3 targetPosition = CalculateCameraPosition();
         transform.position = Vector3.Lerp(transform.position, targetPosition, followSpeed * Time.deltaTime);
 
-        float targetY = player.eulerAngles.y;
-        Quaternion targetRotation = Quaternion.Euler(fixedAngleX, targetY, 0f);
+        // Calculate rotation to look at player
+        Vector3 lookDirection = (player.position - transform.position).normalized;
+        Quaternion targetRotation = Quaternion.LookRotation(lookDirection);
+
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+    }
+
+    private Vector3 CalculateCameraPosition()
+    {
+        Vector3 playerForward = player.forward;
+        playerForward.y = 0f;
+        playerForward.Normalize();
+
+        Vector3 behindPlayer = player.position - (playerForward * followDistance);
+        Vector3 cameraPosition = behindPlayer + Vector3.up * heightOffset;
+        return cameraPosition;
     }
 }
