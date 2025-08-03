@@ -39,52 +39,74 @@ public class SplinePath : MonoBehaviour
         splinePoints.Clear();
         splineDistances.Clear();
 
-        if (controlPoints.Count < 4) 
+        if (controlPoints.Count < 2) 
         {
-            Debug.LogWarning("GenerateSplinePoints: Not enough control points (need 4+)");
+            Debug.LogWarning("GenerateSplinePoints: Not enough control points (need 2+)");
             return;
         }
 
         totalLength = 0f;
-        
+
         // Convert first control point to world coordinates
         Vector3 firstWorldPoint = transform.TransformPoint(controlPoints[0]);
         splinePoints.Add(firstWorldPoint);
         splineDistances.Add(0f);
 
-        for (int i = 0; i <= controlPoints.Count - 4; i += 3)
+        for (int i = 0; i < controlPoints.Count - 1; i++)
         {
-            // Convert control points to world coordinates
-            Vector3 p0 = transform.TransformPoint(controlPoints[i]);
-            Vector3 p1 = transform.TransformPoint(controlPoints[i + 1]);
-            Vector3 p2 = transform.TransformPoint(controlPoints[i + 2]);
-            Vector3 p3 = transform.TransformPoint(controlPoints[i + 3]);
+            // Get the four control points for this segment
+            Vector3 p0, p1, p2, p3;
 
-            Vector3 prevPoint = p0;
+            if (i == 0)
+            {
+                // First segment, duplicate first point for smooth start
+                p0 = transform.TransformPoint(controlPoints[0]);
+                p1 = transform.TransformPoint(controlPoints[0]);
+                p2 = transform.TransformPoint(controlPoints[1]);
+                p3 = transform.TransformPoint(controlPoints[Mathf.Min(2, controlPoints.Count - 1)]);
+            }
+            else if (i == controlPoints.Count - 2)
+            {
+                // Last segment, duplicate last point for smooth end
+                p0 = transform.TransformPoint(controlPoints[Mathf.Max(0, controlPoints.Count - 3)]);
+                p1 = transform.TransformPoint(controlPoints[controlPoints.Count - 2]);
+                p2 = transform.TransformPoint(controlPoints[controlPoints.Count - 1]);
+                p3 = transform.TransformPoint(controlPoints[controlPoints.Count - 1]);
+            }
+            else
+            {
+                // Middle segments, use four consecutive points
+                p0 = transform.TransformPoint(controlPoints[i - 1]);
+                p1 = transform.TransformPoint(controlPoints[i]);
+                p2 = transform.TransformPoint(controlPoints[i + 1]);
+                p3 = transform.TransformPoint(controlPoints[i + 2]);
+            }
 
+            Vector3 prevPoint = splinePoints[splinePoints.Count - 1];
+
+            // Generate points along this segment
             for (int j = 1; j <= segmentsPerCurve; j++)
             {
                 float t = j / (float)segmentsPerCurve;
-                Vector3 point = EvaluateBezier(p0, p1, p2, p3, t);
+                Vector3 point = EvaluateCatmullRom(p0, p1, p2, p3, t);
 
                 totalLength += Vector3.Distance(prevPoint, point);
                 splinePoints.Add(point);
                 splineDistances.Add(totalLength);
-
                 prevPoint = point;
             }
         }
     }
 
-    public static Vector3 EvaluateBezier(Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3, float t)
+    public static Vector3 EvaluateCatmullRom(Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3, float t)
     {
-        float u = 1 - t;
-        float tt = t * t;
-        float uu = u * u;
-        float uuu = uu * u;
-        float ttt = tt * t;
-
-        return uuu * p0 + 3 * uu * t * p1 + 3 * u * tt * p2 + ttt * p3;
+        float t2 = t * t;
+        float t3 = t2 * t;
+        float c0 = -0.5f * t3 + t2 - 0.5f * t;
+        float c1 = 1.5f * t3 - 2.5f * t2 + 1f;
+        float c2 = -1.5f * t3 + 2f * t2 + 0.5f * t;
+        float c3 = 0.5f * t3 - 0.5f * t2;
+        return c0 * p0 + c1 * p1 + c2 * p2 + c3 * p3;
     }
 
     public Vector3 GetPositionAtDistance(float distance)
@@ -104,15 +126,13 @@ public class SplinePath : MonoBehaviour
 
                 Vector3 startPoint = splinePoints[i];
                 Vector3 endPoint = splinePoints[i + 1];
-
-                // Return world coordinates directly since splinePoints are now in world space
                 return Vector3.Lerp(startPoint, endPoint, segmentT);
             }
         }
 
         return splinePoints[splinePoints.Count - 1];
     }
-    
+
     public Vector3 GetDirectionAtDistance(float distance)
     {
         if (splinePoints.Count < 2) return transform.forward;
@@ -166,7 +186,7 @@ public class SplinePath : MonoBehaviour
 
         Gizmos.color = Color.blue;
 
-        // Draw straight lines between control points for simple visualization
+        // Draw straight lines between control points
         for (int i = 0; i < controlPoints.Count - 1; i++)
         {
             Vector3 start = transform.TransformPoint(controlPoints[i]);
@@ -174,48 +194,49 @@ public class SplinePath : MonoBehaviour
             Gizmos.DrawLine(start, end);
         }
 
-        // Draw Bezier curves if we have enough points
-        if (controlPoints.Count >= 4)
+        // Draw curves if we have enough points
+        if (controlPoints.Count >= 2)
         {
             Gizmos.color = Color.cyan;
-
-            for (int i = 0; i <= controlPoints.Count - 4; i += 3)
+            for (int i = 0; i < controlPoints.Count - 1; i++)
             {
-                Vector3 p0 = transform.TransformPoint(controlPoints[i]);
-                Vector3 p1 = transform.TransformPoint(controlPoints[i + 1]);
-                Vector3 p2 = transform.TransformPoint(controlPoints[i + 2]);
-                Vector3 p3 = transform.TransformPoint(controlPoints[i + 3]);
+                Vector3 p0, p1, p2, p3;
 
-                Vector3 prevPoint = p0;
+                if (i == 0)
+                {
+                    // First segment, duplicate first point for smooth start
+                    p0 = transform.TransformPoint(controlPoints[0]);
+                    p1 = transform.TransformPoint(controlPoints[0]);
+                    p2 = transform.TransformPoint(controlPoints[1]);
+                    p3 = transform.TransformPoint(controlPoints[Mathf.Min(2, controlPoints.Count - 1)]);
+                }
+                else if (i == controlPoints.Count - 2)
+                {
+                    // Last segment, duplicate last point for smooth end
+                    p0 = transform.TransformPoint(controlPoints[Mathf.Max(0, controlPoints.Count - 3)]);
+                    p1 = transform.TransformPoint(controlPoints[controlPoints.Count - 2]);
+                    p2 = transform.TransformPoint(controlPoints[controlPoints.Count - 1]);
+                    p3 = transform.TransformPoint(controlPoints[controlPoints.Count - 1]);
+                }
+                else
+                {
+                    // Middle segments, use four consecutive points
+                    p0 = transform.TransformPoint(controlPoints[i - 1]);
+                    p1 = transform.TransformPoint(controlPoints[i]);
+                    p2 = transform.TransformPoint(controlPoints[i + 1]);
+                    p3 = transform.TransformPoint(controlPoints[i + 2]);
+                }
+
+                Vector3 prevPoint = p1;
 
                 for (int j = 1; j <= segmentsPerCurve; j++)
                 {
                     float t = j / (float)segmentsPerCurve;
-                    Vector3 point = EvaluateBezier(p0, p1, p2, p3, t);
+                    Vector3 point = EvaluateCatmullRom(p0, p1, p2, p3, t);
                     Gizmos.DrawLine(prevPoint, point);
                     prevPoint = point;
                 }
             }
-        }
-
-        // Draw lane connections
-        if (leftLane != null)
-        {
-            Gizmos.color = Color.green;
-            Gizmos.DrawLine(transform.position, leftLane.transform.position);
-        }
-
-        if (rightLane != null)
-        {
-            Gizmos.color = Color.red;
-            Gizmos.DrawLine(transform.position, rightLane.transform.position);
-        }
-
-        // Draw path connections
-        if (nextPath != null)
-        {
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawLine(transform.position, nextPath.transform.position);
         }
     }
 
@@ -224,17 +245,13 @@ public class SplinePath : MonoBehaviour
     {
         if (!Application.isPlaying || splinePoints.Count < 2) return;
 
-        // Get the current distance from any SplinePathManager using this spline
         float currentDistance = GetCurrentDistanceFromManager();
-
-        // Draw the spline with traveled/untraveled portions
         DrawSplineWithProgress(currentDistance);
     }
 
     private float GetCurrentDistanceFromManager()
     {
         // Find any SplinePathManager and get the current distance
-        // This will show progress on all splines based on the horse's overall progress
         var pathManagers = FindObjectsOfType<SplinePathManager>();
         foreach (var manager in pathManagers)
         {
@@ -248,8 +265,6 @@ public class SplinePath : MonoBehaviour
     private void DrawSplineWithProgress(float currentDistance)
     {
         if (splinePoints.Count < 2) return;
-
-        // Create line material if it doesn't exist
         if (lineMaterial == null)
         {
             CreateLineMaterial();
@@ -259,17 +274,17 @@ public class SplinePath : MonoBehaviour
 
         GL.Begin(GL.LINES);
 
-        // Draw traveled portion (red)
+        // Draw traveled portion in red
         GL.Color(Color.red);
         DrawSplinePortion(0f, currentDistance);
 
-        // Draw untraveled portion (blue)
+        // Draw untraveled portion in blue
         GL.Color(Color.blue);
         DrawSplinePortion(currentDistance, totalLength);
 
         GL.End();
     }
-    
+
     private void DrawSplinePortion(float startDistance, float endDistance)
     {
         if (startDistance >= endDistance) return;
