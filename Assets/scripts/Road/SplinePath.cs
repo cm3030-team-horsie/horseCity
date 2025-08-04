@@ -170,6 +170,11 @@ public class SplinePath : MonoBehaviour
         return nextPath;
     }
 
+    public SplinePath GetPreviousPath()
+    {
+        return previousPath;
+    }
+
     public SplinePath GetLeftLane()
     {
         return leftLane;
@@ -245,19 +250,23 @@ public class SplinePath : MonoBehaviour
     {
         if (!Application.isPlaying || splinePoints.Count < 2) return;
 
-        float currentDistance = GetCurrentDistanceFromManager();
+        float currentDistance = GetCurrentDistanceFromPlayer();
         DrawSplineWithProgress(currentDistance);
     }
 
-    private float GetCurrentDistanceFromManager()
+    private float GetCurrentDistanceFromPlayer()
     {
-        // Find any SplinePathManager and get the current distance
-        var pathManagers = FindObjectsOfType<SplinePathManager>();
-        foreach (var manager in pathManagers)
+        var playerInputs = FindObjectsOfType<PlayerInputHandler>();
+        foreach (var playerInput in playerInputs)
         {
-            // Return the current distance regardless of which spline is active
-            // All splines show the same progress
-            return manager.GetCurrentDistance();
+            if (playerInput.IsPlaying)
+            {
+                var traveler = playerInput.GetComponent<SplineTraveler>();
+                if (traveler != null)
+                {
+                    return traveler.CurrentDistance;
+                }
+            }
         }
         return 0f;
     }
