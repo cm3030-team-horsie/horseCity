@@ -49,6 +49,14 @@ public class @InputActions : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Jump"",
+                    ""type"": ""Button"",
+                    ""id"": ""d4e5f6g7-h8i9-0123-defg-456789012345"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -216,6 +224,17 @@ public class @InputActions : IInputActionCollection, IDisposable
                     ""action"": ""Movement"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8r9s0t1u-v2w3-4567-rstu-890123456789"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Jump"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -255,6 +274,7 @@ public class @InputActions : IInputActionCollection, IDisposable
         m_Player_SwitchLeft = m_Player.FindAction("SwitchLeft", throwIfNotFound: true);
         m_Player_SwitchRight = m_Player.FindAction("SwitchRight", throwIfNotFound: true);
         m_Player_Movement = m_Player.FindAction("Movement", throwIfNotFound: true);
+        m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
         // Gameplay
         m_Gameplay = asset.FindActionMap("Gameplay", throwIfNotFound: true);
         m_Gameplay_BreakOut = m_Gameplay.FindAction("BreakOut", throwIfNotFound: true);
@@ -316,6 +336,7 @@ public class @InputActions : IInputActionCollection, IDisposable
     private readonly InputAction m_Player_SwitchLeft;
     private readonly InputAction m_Player_SwitchRight;
     private readonly InputAction m_Player_Movement;
+    private readonly InputAction m_Player_Jump;
     public struct PlayerActions
     {
         private @InputActions m_Wrapper;
@@ -324,6 +345,7 @@ public class @InputActions : IInputActionCollection, IDisposable
         public InputAction @SwitchLeft => m_Wrapper.m_Player_SwitchLeft;
         public InputAction @SwitchRight => m_Wrapper.m_Player_SwitchRight;
         public InputAction @Movement => m_Wrapper.m_Player_Movement;
+        public InputAction @Jump => m_Wrapper.m_Player_Jump;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -345,6 +367,9 @@ public class @InputActions : IInputActionCollection, IDisposable
                 @Movement.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnMovement;
                 @Movement.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnMovement;
                 @Movement.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnMovement;
+                @Jump.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnJump;
+                @Jump.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnJump;
+                @Jump.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnJump;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -361,6 +386,9 @@ public class @InputActions : IInputActionCollection, IDisposable
                 @Movement.started += instance.OnMovement;
                 @Movement.performed += instance.OnMovement;
                 @Movement.canceled += instance.OnMovement;
+                @Jump.started += instance.OnJump;
+                @Jump.performed += instance.OnJump;
+                @Jump.canceled += instance.OnJump;
             }
         }
     }
@@ -404,6 +432,7 @@ public class @InputActions : IInputActionCollection, IDisposable
         void OnSwitchLeft(InputAction.CallbackContext context);
         void OnSwitchRight(InputAction.CallbackContext context);
         void OnMovement(InputAction.CallbackContext context);
+        void OnJump(InputAction.CallbackContext context);
     }
     public interface IGameplayActions
     {

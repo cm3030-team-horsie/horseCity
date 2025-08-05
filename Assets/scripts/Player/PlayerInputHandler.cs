@@ -13,6 +13,7 @@ public class PlayerInputHandler : MonoBehaviour
 
     public System.Action<PlayerInputHandler> OnInputEnabled;
     public System.Action<PlayerInputHandler> OnInputDisabled;
+    public System.Action OnJumpPerformed;
 
     private void Awake()
     {
@@ -47,6 +48,7 @@ public class PlayerInputHandler : MonoBehaviour
     {
         if (!enableInput || !isPlaying) return;
         HandleLaneSwitchingInput();
+        HandleJumpInput();
     }
 
     private void HandleLaneSwitchingInput()
@@ -115,6 +117,14 @@ public class PlayerInputHandler : MonoBehaviour
         else
         {
             OnInputDisabled?.Invoke(this);
+        }
+    }
+
+    private void HandleJumpInput()
+    {
+        if (inputActions.Player.Jump.triggered)
+        {
+            OnJumpPerformed?.Invoke();
         }
     }
 

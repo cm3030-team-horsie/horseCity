@@ -133,10 +133,15 @@ public class LaneSwitcher : MonoBehaviour
         float currentDistance = splineTraveler.CurrentDistance;
         Vector3 targetPosition = targetLane.GetPositionAtDistance(currentDistance);
 
+        Vector3 targetDirection = targetLane.GetDirectionAtDistance(currentDistance);
+        if (!splineTraveler.MovingForward)
+        {
+            targetDirection = -targetDirection;
+        }
+        Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
+
         // Smooth interpolation between start and target
         transform.position = Vector3.Lerp(switchStartPosition, targetPosition, progress);
-
-        Quaternion targetRotation = Quaternion.identity; // TODO: Change this?
         transform.rotation = Quaternion.Slerp(switchStartRotation, targetRotation, progress);
     }
 
