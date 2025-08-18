@@ -4,39 +4,50 @@
 public class PlaySounds : MonoBehaviour
 {
     [Header("UI Sound Effects")]
-    public AudioClip moveSound;   // e.g. for hover
-    public AudioClip selectSound; // e.g. for click
+    public AudioClip moveSound;
+    public AudioClip selectSound;
+    public AudioClip appleCollectedSound;
 
-    private AudioSource sound;
+    private AudioSource audioSource;
 
     private void Awake()
     {
-        sound = GetComponent<AudioSource>();
-        sound.playOnAwake = false;
-        sound.spatialBlend = 0f; // make it 2D for UI
+        audioSource = GetComponent<AudioSource>();
+        audioSource.playOnAwake = false;
+        audioSource.spatialBlend = 0f;
+    }
+
+    private void OnEnable()
+    {
+        EventManager.OnAppleCollected += PlayAppleSound;
+    }
+
+    private void OnDisable()
+    {
+        EventManager.OnAppleCollected -= PlayAppleSound;
+    }
+
+    private void PlayAppleSound()
+    {
+        if (appleCollectedSound != null)
+            audioSource.PlayOneShot(appleCollectedSound);
+        //else
+        //    Debug.LogWarning("No appleCollectedSound assigned!");
     }
 
     public void PlayMoveSound()
     {
         if (moveSound != null)
-            sound.PlayOneShot(moveSound);
-        else
-            Debug.LogWarning("Move sound not assigned!");
+                audioSource.PlayOneShot(moveSound);
+        //else
+        //    Debug.LogWarning("no move sounds");
     }
 
     public void PlaySelectSound()
     {
         if (selectSound != null)
-            sound.PlayOneShot(selectSound);
-        else
-            Debug.LogWarning("Select sound not assigned!");
+                audioSource.PlayOneShot(selectSound);
+        //else
+        //    Debug.LogWarning("no select sound");
     }
-
-    //public void PlayASound(AudioClip clip)
-    //{
-    //    if (clip != null)
-    //        sound.PlayOneShot(clip);
-    //    else
-    //        Debug.LogWarning("AudioClip not assigned to PlayASound!");
-    //}
 }

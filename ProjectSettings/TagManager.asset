@@ -9,6 +9,8 @@ TagManager:
   - wood
   - water
   - Road
+  - Horse
+  - Apple
   layers:
   - Default
   - TransparentFX

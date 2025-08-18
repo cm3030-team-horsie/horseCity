@@ -1,18 +1,17 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿//using UnityEngine;
 
-public class UIAudio : MonoBehaviour
-{
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+//public class UIAudio : MonoBehaviour
+//{
+//    [SerializeField] private PlaySounds gameSounds;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-}
+//    public void PlayHoverSound()
+//    {
+//        gameSounds.PlayHoverSound(); // new method in GameSounds
+//    }
+
+//    public void PlayClickSound()
+//    {
+//        gameSounds.PlayClickSound(); // new method in GameSounds
+//    }
+//}
+
