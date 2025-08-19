@@ -11,6 +11,7 @@ TagManager:
   - Road
   - Horse
   - Apple
+  - Car
   layers:
   - Default
   - TransparentFX
