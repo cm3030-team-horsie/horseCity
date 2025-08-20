@@ -8,7 +8,7 @@ public class AppleCounterUI : MonoBehaviour
     private void OnEnable()
     {
         UpdateText(AppleCounter.Apples);
-        AppleCounter.OnChanged += UpdateText;    // counter
+        AppleCounter.OnChanged += UpdateText;    // counter for the apples
     }
 
     private void OnDisable() => AppleCounter.OnChanged -= UpdateText;
