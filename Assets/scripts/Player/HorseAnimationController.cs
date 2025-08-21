@@ -7,6 +7,9 @@ class HorseAnimationController : MonoBehaviour
     private SplineTraveler splineTraveler;
     private PlayerInputHandler playerInputHandler;
 
+    [Header("UI References")]
+    [SerializeField] private GameOverUI gameOverUI;
+
     [SerializeField] public bool showDebugInfo = false;
 
     [Header("Animation Settings")]
@@ -107,6 +110,22 @@ class HorseAnimationController : MonoBehaviour
 
         // trigger the death animation
         animator.SetTrigger("Die");
+
+        // delay Game Over panel to let the animation play
+        Invoke(nameof(ShowGameOverPanel), 2f);
+    }
+
+    private void ShowGameOverPanel()
+    {
+        if (gameOverUI != null)
+        {
+            gameOverUI.Show();
+            Debug.Log("Game Over Panel Shown!");
+        }
+        else
+        {
+            Debug.LogError("GameOverUI reference not set in Inspector!");
+        }
     }
 
     private void OnStartedMoving(SplineTraveler traveler)
@@ -137,7 +156,6 @@ class HorseAnimationController : MonoBehaviour
             audioSource.Play();
         }
     }
-
 
     private void OnStoppedMoving(SplineTraveler traveler)
     {
