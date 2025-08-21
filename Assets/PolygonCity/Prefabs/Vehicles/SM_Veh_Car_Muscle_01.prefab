@@ -184,6 +184,8 @@ GameObject:
   - component: {fileID: 3334542}
   - component: {fileID: 2383878}
   - component: {fileID: 64398827108221090}
+  - component: {fileID: 2133030878482350334}
+  - component: {fileID: -1725037141610461799}
   m_Layer: 0
   m_Name: SM_Veh_Car_Muscle_01
   m_TagString: Car
@@ -268,11 +270,39 @@ MeshCollider:
   m_GameObject: {fileID: 141870}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 4
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300000, guid: 823ed423ae6ba0d4589ddb8fe51e7f14, type: 3}
+--- !u!65 &2133030878482350334
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 141870}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 2.429984, y: 1.3140848, z: 5.642581}
+  m_Center: {x: 0.000000059604645, y: 0.8365443, z: 0.13018548}
+--- !u!114 &-1725037141610461799
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 141870}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d061373c9dfff46ee98d3059cf83bafe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  slowDuration: 2
+  slowMultiplier: 0.5
+  carHitSound: {fileID: 0}
 --- !u!1 &166256
 GameObject:
   m_ObjectHideFlags: 0
