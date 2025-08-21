@@ -1,35 +1,33 @@
 ﻿using UnityEngine;
 
-public class CarCollision : MonoBehaviour
+public class ObstacleCollision : MonoBehaviour
 {
-    [Header("Slowdown Settings")]
-    public float slowDuration = 2f;     // seconds slowed
-    public float slowMultiplier = 0.5f; // horse runs at 50% speed
-
-    public AudioClip carHitSound;
+    [Header("Penalty Settings")]
+    public float slowDuration = 1.5f;
+    public float slowMultiplier = 0.5f;
+    public AudioClip hitSound;
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Horse"))
         {
-            Debug.Log("Horse collided with a car!");
+            Debug.Log("Horse hit an obstacle!");
 
-            // play sound if assigned
-            if (carHitSound != null)
-                AudioSource.PlayClipAtPoint(carHitSound, transform.position);
+            // play sound
+            if (hitSound != null)
+                AudioSource.PlayClipAtPoint(hitSound, transform.position);
 
-            // get the horse’s spline traveler
+            // slow the horse
             var splineTraveler = other.GetComponent<SplineTraveler>();
             if (splineTraveler != null)
-            {
                 splineTraveler.StartCoroutine(SlowHorse(splineTraveler));
-            }
 
-            // remove the car
+            // remove the obstacle if colllides
             Destroy(gameObject);
         }
     }
 
+    // slows the horse down
     private System.Collections.IEnumerator SlowHorse(SplineTraveler splineTraveler)
     {
         float originalSpeed = splineTraveler.TravelSpeed;

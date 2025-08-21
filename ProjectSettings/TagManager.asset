@@ -12,6 +12,7 @@ TagManager:
   - Horse
   - Apple
   - Car
+  - Obstacle
   layers:
   - Default
   - TransparentFX
