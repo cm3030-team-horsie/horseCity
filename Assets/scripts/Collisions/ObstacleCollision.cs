@@ -9,23 +9,24 @@ public class ObstacleCollision : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Horse"))
+        if (other.CompareTag("Player"))
         {
             Debug.Log("Horse hit an obstacle!");
 
-            // play sound
-            if (hitSound != null)
-                AudioSource.PlayClipAtPoint(hitSound, transform.position);
+            // minus a point
+            if (LivesCounter.Instance != null)
+                LivesCounter.Instance.DeductLife();
 
-            // slow the horse
+            // Slow the horse
             var splineTraveler = other.GetComponent<SplineTraveler>();
             if (splineTraveler != null)
                 splineTraveler.StartCoroutine(SlowHorse(splineTraveler));
 
-            // remove the obstacle if colllides
+            // Remove the obstacle
             Destroy(gameObject);
         }
     }
+
 
     // slows the horse down
     private System.Collections.IEnumerator SlowHorse(SplineTraveler splineTraveler)

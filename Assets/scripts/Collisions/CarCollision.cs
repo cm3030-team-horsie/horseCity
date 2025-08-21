@@ -14,6 +14,10 @@ public class CarCollision : MonoBehaviour
         {
             Debug.Log("Horse collided with a car!");
 
+            // Deduct a point
+            if (LivesCounter.Instance != null)
+                LivesCounter.Instance.DeductLife();
+
             // sound when hit
             if (carHitSound != null)
                 AudioSource.PlayClipAtPoint(carHitSound, transform.position);
