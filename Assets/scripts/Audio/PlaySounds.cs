@@ -8,6 +8,10 @@ public class PlaySounds : MonoBehaviour
     public AudioClip selectSound;
     public AudioClip appleCollectedSound;
 
+    [Header("Collision Sound Effects")]
+    public AudioClip carCollisionSound;
+    public AudioClip obstacleCollisionSound;
+
     private AudioSource audioSource;
 
     private void Awake()
@@ -20,11 +24,15 @@ public class PlaySounds : MonoBehaviour
     private void OnEnable()
     {
         EventManager.OnAppleCollected += PlayAppleSound;
+        EventManager.OnCarCollision += PlayCarSound;
+        EventManager.OnObstacleCollision += PlayObstacleSound;
     }
 
     private void OnDisable()
     {
         EventManager.OnAppleCollected -= PlayAppleSound;
+        EventManager.OnCarCollision -= PlayCarSound;
+        EventManager.OnObstacleCollision -= PlayObstacleSound;
     }
 
     private void PlayAppleSound()
@@ -32,7 +40,23 @@ public class PlaySounds : MonoBehaviour
         if (appleCollectedSound != null)
             audioSource.PlayOneShot(appleCollectedSound);
         //else
-        //    Debug.LogWarning("No appleCollectedSound assigned!");
+        //    Debug.LogWarning("no appleCollectedSound assigned!");
+    }
+
+    private void PlayCarSound()
+    {
+        if (carCollisionSound != null)
+            audioSource.PlayOneShot(carCollisionSound);
+        //else
+        //    Debug.LogWarning("no car sound assigned!");
+    }
+
+    private void PlayObstacleSound()
+    {
+        if (obstacleCollisionSound != null)
+            audioSource.PlayOneShot(obstacleCollisionSound);
+        //else
+        //    Debug.LogWarning("no obsacle assigned!");
     }
 
     public void PlayMoveSound()

@@ -13,6 +13,8 @@ public class ObstacleCollision : MonoBehaviour
         {
             Debug.Log("Horse hit an obstacle!");
 
+            EventManager.RaiseObstacleCollision();
+
             // minus a point
             if (LivesCounter.Instance != null)
                 LivesCounter.Instance.DeductLife();

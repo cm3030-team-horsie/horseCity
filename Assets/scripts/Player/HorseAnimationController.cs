@@ -20,6 +20,13 @@ class HorseAnimationController : MonoBehaviour
     [SerializeField] private float jumpDuration = 0.6f;    // how long the boost lasts
     private bool isJumping = false;
 
+    [Header("Start Sound")]
+    [SerializeField] private AudioClip openTrailerSound;
+    [SerializeField] private AudioClip gallopingSound;
+    [SerializeField] private AudioClip jumpSound;
+
+    private AudioSource audioSource;
+
     private void Awake()
     {
         animator = GetComponent<Animator>();
@@ -27,16 +34,22 @@ class HorseAnimationController : MonoBehaviour
         {
             Debug.LogError("Animator component not found on the horse");
         }
+
         splineTraveler = GetComponent<SplineTraveler>();
         if (splineTraveler == null)
         {
             Debug.LogError("SplineTraveler component not found on the horse");
         }
+
         playerInputHandler = GetComponent<PlayerInputHandler>();
         if (playerInputHandler == null)
         {
             Debug.LogError("PlayerInputHandler component not found on the horse");
         }
+
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null) Debug.LogError("AudioSource component not found on the horse");
+
     }
 
     public void Start()
@@ -99,8 +112,32 @@ class HorseAnimationController : MonoBehaviour
     private void OnStartedMoving(SplineTraveler traveler)
     {
         if (showDebugInfo) Debug.Log("Horse is moving, triggering movement animation");
+
+        // play trailer bang sound once
+        if (openTrailerSound != null && audioSource != null)
+            audioSource.PlayOneShot(openTrailerSound);
+
+        // start galloping sound
+        if (gallopingSound != null && audioSource != null)
+        {
+            // delay for the open trailer soundd
+            float delay = openTrailerSound != null ? openTrailerSound.length : 0f;
+            Invoke(nameof(StartGallopingSound), delay);
+        }
+
         StartSpeedTransition(1f, 0f);
     }
+
+    private void StartGallopingSound()
+    {
+        if (gallopingSound != null && audioSource != null)
+        {
+            audioSource.clip = gallopingSound;
+            audioSource.loop = true;
+            audioSource.Play();
+        }
+    }
+
 
     private void OnStoppedMoving(SplineTraveler traveler)
     {
@@ -146,6 +183,10 @@ class HorseAnimationController : MonoBehaviour
     {
         if (!isJumping)
             StartCoroutine(JumpBoost());
+
+        // jump sound
+        if (jumpSound != null && audioSource != null)
+            audioSource.PlayOneShot(jumpSound);
 
         if (showDebugInfo)
             Debug.Log("Horse jumped");
