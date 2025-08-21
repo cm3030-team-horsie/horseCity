@@ -9,7 +9,7 @@ public class ObstacleCollision : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Horse"))
         {
             Debug.Log("Horse hit an obstacle!");
 

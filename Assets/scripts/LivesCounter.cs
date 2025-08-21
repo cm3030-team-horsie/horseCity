@@ -5,7 +5,7 @@ public class LivesCounter : MonoBehaviour
     public static LivesCounter Instance;
 
     [Header("Lives Settings")]
-    [SerializeField] private int startLives = 8;    // lives start with
+    [SerializeField] private int startLives = 5;    // lives start with
     private int currentLives;
 
     public System.Action<int> OnLivesChanged; // uodate the UI

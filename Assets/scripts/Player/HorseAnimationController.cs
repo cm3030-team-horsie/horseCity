@@ -46,6 +46,10 @@ class HorseAnimationController : MonoBehaviour
 
         playerInputHandler.OnJumpPerformed += OnJumpPerformed;
 
+        // Listen for game over (lives = 0)
+        if (LivesCounter.Instance != null)
+            LivesCounter.Instance.OnGameOver += PlayDeathAnimation;
+
         if (showDebugInfo)
         {
             InvokeRepeating("LogCurrentAnimation", 0f, 1f);
@@ -69,6 +73,27 @@ class HorseAnimationController : MonoBehaviour
         float animatorSpeed = animator.GetFloat("Speed");
         string transitionStatus = isTransitioning ? " (transitioning)" : "";
         Debug.Log($"Current animation: {name}, Speed parameter: {animatorSpeed:F2}{transitionStatus}");
+    }
+
+    private void PlayDeathAnimation()
+    {
+        Debug.Log("Horse died – playing death animation & stopping movement.");
+
+        // stops the movement of the horse immediately
+        if (splineTraveler != null)
+        {
+            splineTraveler.StopMoving();
+            splineTraveler.enabled = false;
+        }
+
+        // no more player inpout - disabled
+        if (playerInputHandler != null)
+        {
+            playerInputHandler.enabled = false;
+        }
+
+        // trigger the death animation
+        animator.SetTrigger("Die");
     }
 
     private void OnStartedMoving(SplineTraveler traveler)
@@ -160,5 +185,9 @@ class HorseAnimationController : MonoBehaviour
     {
         if (playerInputHandler != null)
             playerInputHandler.OnJumpPerformed -= OnJumpPerformed;
+
+        if (LivesCounter.Instance != null)
+            LivesCounter.Instance.OnGameOver -= PlayDeathAnimation;
     }
+
 }

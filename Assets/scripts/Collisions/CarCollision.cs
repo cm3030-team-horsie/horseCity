@@ -14,7 +14,7 @@ public class CarCollision : MonoBehaviour
         {
             Debug.Log("Horse collided with a car!");
 
-            // Deduct a point
+            // minus a point
             if (LivesCounter.Instance != null)
                 LivesCounter.Instance.DeductLife();
 
