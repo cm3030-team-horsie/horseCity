@@ -1,33 +1,42 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class MenuSelection : MonoBehaviour
 {
+    // delay time for menu selection
+    [SerializeField] private float sceneLoadDelay = 0.8f;
+
     public void StartEasyLevel()
     {
-        SceneManager.LoadScene("EasyLevel");
-    }
-
-    public void StartMediumLevel()
-    {
-        SceneManager.LoadScene("MediumLevel");
+        StartCoroutine(LoadSceneWithDelay("EasyLevel"));
     }
 
     public void StartHardLevel()
     {
-        SceneManager.LoadScene("HardLevel");
+        StartCoroutine(LoadSceneWithDelay("HardLevel"));
     }
 
     public void LoadMainMenu()
     {
-        SceneManager.LoadScene("MainMenu");
+        StartCoroutine(LoadSceneWithDelay("MainMenu"));
+    }
+
+    public void LoadInstructions()
+    {
+        StartCoroutine(LoadSceneWithDelay("Instructions"));
     }
 
     public void ExitGame()
     {
         Application.Quit();
         Debug.Log("Game exited.");
+    }
+
+    private IEnumerator LoadSceneWithDelay(string sceneName)
+    {
+        yield return new WaitForSeconds(sceneLoadDelay);
+        SceneManager.LoadScene(sceneName);
     }
 }
