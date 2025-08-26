@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -10,11 +9,13 @@ public class MenuSelection : MonoBehaviour
 
     public void StartEasyLevel()
     {
+        GameManager.SetDifficulty(Difficulty.Easy);   // set difficulty
         StartCoroutine(LoadSceneWithDelay("EasyLevel"));
     }
 
     public void StartHardLevel()
     {
+        GameManager.SetDifficulty(Difficulty.Hard); // set difficulty
         StartCoroutine(LoadSceneWithDelay("HardLevel"));
     }
 

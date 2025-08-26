@@ -9,9 +9,6 @@ public class CarController : MonoBehaviour
     [Header("Path Following")]
     [SerializeField] private bool followNextPath = true; // Whether to follow connected paths
 
-    [Header("Debug")]
-    [SerializeField] private bool showDebugInfo = false;
-
     private SplineTraveler splineTraveler;
 
     private void Awake()
@@ -24,10 +21,14 @@ public class CarController : MonoBehaviour
             return;
         }
 
+        // Forward or backward depending on traffic type
         splineTraveler.SetIsTravelingForward(!isOncomingTraffic);
 
+        // Hook into spline events
         splineTraveler.OnReachedPathEnd += OnReachedPathEnd;
         splineTraveler.OnReachedPathStart += OnReachedPathStart;
+
+        // Listen for game state
         GameManager.OnGameStateChanged += HandleGameStateChanged;
     }
 
@@ -38,10 +39,8 @@ public class CarController : MonoBehaviour
         {
             splineTraveler.ForceSnapToNearestPath();
 
-            if (showDebugInfo)
-            {
-                Debug.Log($"{gameObject.name} snapped to spline: {splineTraveler.SplinePath?.name} at distance: {splineTraveler.CurrentDistance}");
-            }
+            // apply difficulty speeds
+            ApplyDifficultySettings();
         }
     }
 
@@ -69,10 +68,6 @@ public class CarController : MonoBehaviour
         if (splineTraveler != null)
         {
             splineTraveler.StartMoving();
-            if (showDebugInfo)
-            {
-                Debug.Log($"{gameObject.name} started moving (Playing state)");
-            }
         }
     }
 
@@ -81,10 +76,6 @@ public class CarController : MonoBehaviour
         if (splineTraveler != null)
         {
             splineTraveler.StopMoving();
-            if (showDebugInfo)
-            {
-                Debug.Log($"{gameObject.name} stopped moving (Not Playing state)");
-            }
         }
     }
 
@@ -94,7 +85,6 @@ public class CarController : MonoBehaviour
         {
             TransitionToPath(splineTraveler.SplinePath.GetNextPath(), 0f);
         }
-        // Otherwise, the traveler will stop automatically
     }
 
     private void OnReachedPathStart(SplineTraveler traveler)
@@ -105,18 +95,11 @@ public class CarController : MonoBehaviour
             SplinePath previousPath = splineTraveler.SplinePath.GetPreviousPath();
             TransitionToPath(previousPath, previousPath.GetTotalLength());
         }
-        // Otherwise, the traveler will stop automatically
     }
 
     private void TransitionToPath(SplinePath newPath, float distance)
     {
-        // Basically just a wrapper
         splineTraveler.SetSplinePath(newPath, distance);
-
-        if (showDebugInfo)
-        {
-            Debug.Log($"{gameObject.name} transitioning to path: {newPath.name}");
-        }
     }
 
     public void SetOncomingTraffic(bool oncoming)
@@ -131,5 +114,18 @@ public class CarController : MonoBehaviour
     public bool IsOncomingTraffic()
     {
         return isOncomingTraffic;
+    }
+
+    // difficulty settings for car speed
+    private void ApplyDifficultySettings()
+    {
+        if (GameManager.CurrentDifficulty == Difficulty.Easy)
+        {
+            splineTraveler.TravelSpeed = 9f;  // easy level car speed
+        }
+        else if (GameManager.CurrentDifficulty == Difficulty.Hard)
+        {
+            splineTraveler.TravelSpeed = 14f; // hard level car speed
+        }
     }
 }

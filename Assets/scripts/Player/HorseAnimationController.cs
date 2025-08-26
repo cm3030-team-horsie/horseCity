@@ -6,6 +6,7 @@ class HorseAnimationController : MonoBehaviour
     private Animator animator;
     private SplineTraveler splineTraveler;
     private PlayerInputHandler playerInputHandler;
+    private LaneSwitcher laneSwitcher;
 
     [Header("UI References")]
     [SerializeField] private GameOverUI gameOverUI;
@@ -14,13 +15,13 @@ class HorseAnimationController : MonoBehaviour
 
     [Header("Animation Settings")]
     [SerializeField] private float transitionDuration = 0.0f;
-    [SerializeField] private float targetSpeed = 0f; // The target speed we're transitioning to
-    [SerializeField] private float currentSpeed = 0f; // The current speed value
-    [SerializeField] private bool isTransitioning = false; // Whether we're currently transitioning
+    [SerializeField] private float targetSpeed = 0f;
+    [SerializeField] private float currentSpeed = 0f;
+    [SerializeField] private bool isTransitioning = false;
 
     [Header("Jump Settings")]
-    [SerializeField] private float jumpBoostHeight = 1f;   // extra vertical height
-    [SerializeField] private float jumpDuration = 0.6f;    // how long the boost lasts
+    [SerializeField] private float jumpBoostHeight = 1f;
+    [SerializeField] private float jumpDuration = 0.6f;
     private bool isJumping = false;
 
     [Header("Start Sound")]
@@ -33,117 +34,82 @@ class HorseAnimationController : MonoBehaviour
     private void Awake()
     {
         animator = GetComponent<Animator>();
-        if (animator == null)
-        {
-            Debug.LogError("Animator component not found on the horse");
-        }
-
         splineTraveler = GetComponent<SplineTraveler>();
-        if (splineTraveler == null)
-        {
-            Debug.LogError("SplineTraveler component not found on the horse");
-        }
-
         playerInputHandler = GetComponent<PlayerInputHandler>();
-        if (playerInputHandler == null)
-        {
-            Debug.LogError("PlayerInputHandler component not found on the horse");
-        }
-
+        laneSwitcher = GetComponent<LaneSwitcher>();
         audioSource = GetComponent<AudioSource>();
-        if (audioSource == null) Debug.LogError("AudioSource component not found on the horse");
-
     }
 
     public void Start()
     {
         splineTraveler.OnStartedMoving += OnStartedMoving;
         splineTraveler.OnStoppedMoving += OnStoppedMoving;
-
         playerInputHandler.OnJumpPerformed += OnJumpPerformed;
 
-        // Listen for game over (lives = 0)
         if (LivesCounter.Instance != null)
             LivesCounter.Instance.OnGameOver += PlayDeathAnimation;
 
         if (showDebugInfo)
-        {
             InvokeRepeating("LogCurrentAnimation", 0f, 1f);
-        }
 
         currentSpeed = animator.GetFloat("Speed");
         targetSpeed = currentSpeed;
+
+        ApplyDifficultySettings();
+    }
+
+    private void ApplyDifficultySettings()
+    {
+        if (GameManager.CurrentDifficulty == Difficulty.Easy)
+        {
+            splineTraveler.TravelSpeed = 10f;
+            if (laneSwitcher != null) laneSwitcher.SwitchDuration = 0.5f;
+        }
+        else if (GameManager.CurrentDifficulty == Difficulty.Hard)
+        {
+            splineTraveler.TravelSpeed = 20f;
+            if (laneSwitcher != null) laneSwitcher.SwitchDuration = 1.0f;
+        }
     }
 
     public void LogCurrentAnimation()
     {
         if (!showDebugInfo) return;
-
         AnimatorStateInfo state = animator.GetCurrentAnimatorStateInfo(0);
-        string name = "";
-        if (state.IsName("Idle")) name = "Idle";
-        else if (state.IsName("Gait")) name = "Gait";
-        else if (state.IsName("Jump")) name = "Jump";
-        else name = "Unknown";
-
+        string name = state.IsName("Idle") ? "Idle" :
+                      state.IsName("Gait") ? "Gait" :
+                      state.IsName("Jump") ? "Jump" : "Unknown";
         float animatorSpeed = animator.GetFloat("Speed");
-        string transitionStatus = isTransitioning ? " (transitioning)" : "";
-        Debug.Log($"Current animation: {name}, Speed parameter: {animatorSpeed:F2}{transitionStatus}");
+        Debug.Log($"Current animation: {name}, Speed: {animatorSpeed:F2}");
     }
 
     private void PlayDeathAnimation()
     {
-        Debug.Log("Horse died – playing death animation & stopping movement.");
-
-        // stops the movement of the horse immediately
         if (splineTraveler != null)
         {
             splineTraveler.StopMoving();
             splineTraveler.enabled = false;
         }
-
-        // no more player inpout - disabled
         if (playerInputHandler != null)
-        {
             playerInputHandler.enabled = false;
-        }
 
-        // trigger the death animation
         animator.SetTrigger("Die");
-
-        // delay Game Over panel to let the animation play
         Invoke(nameof(ShowGameOverPanel), 2f);
     }
 
     private void ShowGameOverPanel()
     {
-        if (gameOverUI != null)
-        {
-            gameOverUI.Show();
-            Debug.Log("Game Over Panel Shown!");
-        }
-        else
-        {
-            Debug.LogError("GameOverUI reference not set in Inspector!");
-        }
+        if (gameOverUI != null) gameOverUI.Show();
     }
 
     private void OnStartedMoving(SplineTraveler traveler)
     {
-        if (showDebugInfo) Debug.Log("Horse is moving, triggering movement animation");
-
-        // play trailer bang sound once
-        if (openTrailerSound != null && audioSource != null)
-            audioSource.PlayOneShot(openTrailerSound);
-
-        // start galloping sound
-        if (gallopingSound != null && audioSource != null)
+        if (openTrailerSound != null) audioSource?.PlayOneShot(openTrailerSound);
+        if (gallopingSound != null)
         {
-            // delay for the open trailer soundd
             float delay = openTrailerSound != null ? openTrailerSound.length : 0f;
             Invoke(nameof(StartGallopingSound), delay);
         }
-
         StartSpeedTransition(1f, 0f);
     }
 
@@ -157,11 +123,8 @@ class HorseAnimationController : MonoBehaviour
         }
     }
 
-    private void OnStoppedMoving(SplineTraveler traveler)
-    {
-        if (showDebugInfo) Debug.Log("Horse is stopped, triggering idle animation");
+    private void OnStoppedMoving(SplineTraveler traveler) =>
         StartSpeedTransition(0f, 1f);
-    }
 
     private void Update()
     {
@@ -173,80 +136,47 @@ class HorseAnimationController : MonoBehaviour
         targetSpeed = newTargetSpeed;
         transitionDuration = newTransitionDuration;
         isTransitioning = true;
-
-        if (showDebugInfo)
-            Debug.Log($"Starting speed transition: {currentSpeed:F2} -> {targetSpeed:F2}");
     }
 
     private void UpdateSpeedTransition()
     {
         float step = Time.deltaTime / transitionDuration;
-
-        if (targetSpeed > currentSpeed)
-            currentSpeed = Mathf.Min(currentSpeed + step, targetSpeed);
-        else if (targetSpeed < currentSpeed)
-            currentSpeed = Mathf.Max(currentSpeed - step, targetSpeed);
-
+        currentSpeed = Mathf.MoveTowards(currentSpeed, targetSpeed, step);
         animator.SetFloat("Speed", currentSpeed);
-
-        if (Mathf.Approximately(currentSpeed, targetSpeed))
-        {
-            isTransitioning = false;
-            if (showDebugInfo)
-                Debug.Log($"Speed transition complete: {currentSpeed:F2}");
-        }
+        if (Mathf.Approximately(currentSpeed, targetSpeed)) isTransitioning = false;
     }
 
     private void OnJumpPerformed()
     {
-        if (!isJumping)
-            StartCoroutine(JumpBoost());
-
-        // jump sound
-        if (jumpSound != null && audioSource != null)
-            audioSource.PlayOneShot(jumpSound);
-
-        if (showDebugInfo)
-            Debug.Log("Horse jumped");
+        if (!isJumping) StartCoroutine(JumpBoost());
+        if (jumpSound != null) audioSource?.PlayOneShot(jumpSound);
     }
 
     private System.Collections.IEnumerator JumpBoost()
     {
         isJumping = true;
-
-        // trigger jump animation
         animator.SetTrigger("Jump");
 
         float elapsed = 0f;
-        float baseY = transform.position.y;  // remember the horse’s ground level
+        float baseY = transform.position.y;
 
         while (elapsed < jumpDuration)
         {
             elapsed += Time.deltaTime;
             float normalized = elapsed / jumpDuration;
-
-            // smooth jumparc
             float height = (1f - Mathf.Cos(normalized * Mathf.PI)) * jumpBoostHeight;
-
-
-            // changes y position ONLY
             Vector3 pos = transform.position;
             pos.y = baseY + height;
             transform.position = pos;
-
             yield return null;
         }
-
         isJumping = false;
     }
 
     private void OnDestroy()
     {
-        if (playerInputHandler != null)
-            playerInputHandler.OnJumpPerformed -= OnJumpPerformed;
-
+        playerInputHandler.OnJumpPerformed -= OnJumpPerformed;
         if (LivesCounter.Instance != null)
             LivesCounter.Instance.OnGameOver -= PlayDeathAnimation;
     }
-
 }
