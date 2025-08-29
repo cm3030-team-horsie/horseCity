@@ -293,9 +293,16 @@ class HorseAnimationController : MonoBehaviour
         if (playerInputHandler != null)
             playerInputHandler.enabled = false;
 
+        // stop gallopping audio when the horse dies
+        if (audioSource != null && audioSource.clip == gallopingSound && audioSource.isPlaying)
+        {
+            audioSource.Stop();
+        }
+
         animator.SetTrigger("Die");
         Invoke(nameof(ShowGameOverPanel), 2f);
     }
+
 
     private void ShowGameOverPanel()
     {
