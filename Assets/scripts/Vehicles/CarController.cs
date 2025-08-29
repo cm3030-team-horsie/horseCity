@@ -7,7 +7,7 @@ public class CarController : MonoBehaviour
     [SerializeField] private bool isOncomingTraffic = false;
 
     [Header("Path Following")]
-    [SerializeField] private bool followNextPath = true; // Whether to follow connected paths
+    [SerializeField] private bool followNextPath = true;
 
     private SplineTraveler splineTraveler;
 
@@ -21,20 +21,19 @@ public class CarController : MonoBehaviour
             return;
         }
 
-        // Forward or backward depending on traffic type
+        // forward or backward
         splineTraveler.SetIsTravelingForward(!isOncomingTraffic);
 
-        // Hook into spline events
         splineTraveler.OnReachedPathEnd += OnReachedPathEnd;
         splineTraveler.OnReachedPathStart += OnReachedPathStart;
 
-        // Listen for game state
+        // listen for game state change
         GameManager.OnGameStateChanged += HandleGameStateChanged;
     }
 
     private void Start()
     {
-        // Snap to nearest path after all components are initialized
+        // snap to nearest path
         if (splineTraveler != null)
         {
             splineTraveler.ForceSnapToNearestPath();
@@ -46,7 +45,6 @@ public class CarController : MonoBehaviour
 
     private void OnDestroy()
     {
-        // Unsubscribe from game state changes
         GameManager.OnGameStateChanged -= HandleGameStateChanged;
     }
 
@@ -85,13 +83,18 @@ public class CarController : MonoBehaviour
         {
             TransitionToPath(splineTraveler.SplinePath.GetNextPath(), 0f);
         }
+        else
+        {
+            // destroy the car at the end of the road
+            Destroy(gameObject);
+        }
     }
 
     private void OnReachedPathStart(SplineTraveler traveler)
     {
         if (followNextPath && splineTraveler.SplinePath != null && splineTraveler.SplinePath.GetPreviousPath() != null)
         {
-            // Transition to previous path
+            // transition to previous path
             SplinePath previousPath = splineTraveler.SplinePath.GetPreviousPath();
             TransitionToPath(previousPath, previousPath.GetTotalLength());
         }
