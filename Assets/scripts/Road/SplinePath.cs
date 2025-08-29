@@ -19,8 +19,8 @@ public class SplinePath : MonoBehaviour
     public SplinePath nextPath;
     public SplinePath previousPath;
 
-    private List<Vector3> splinePoints = new List<Vector3>();
-    private List<float> splineDistances = new List<float>();
+    public List<Vector3> splinePoints = new List<Vector3>();
+    public List<float> splineDistances = new List<float>();
     private float totalLength;
 
     private void Awake()
@@ -243,15 +243,6 @@ public class SplinePath : MonoBehaviour
                 }
             }
         }
-    }
-
-    // In-game rendering for debugging
-    private void OnRenderObject()
-    {
-        if (!Application.isPlaying || splinePoints.Count < 2) return;
-
-        float currentDistance = GetCurrentDistanceFromPlayer();
-        DrawSplineWithProgress(currentDistance);
     }
 
     private float GetCurrentDistanceFromPlayer()
