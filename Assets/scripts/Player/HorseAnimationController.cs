@@ -299,6 +299,9 @@ class HorseAnimationController : MonoBehaviour
             audioSource.Stop();
         }
 
+        // stop the cars
+        GameManager.Instance.SetGameState(GameState.GameOver);
+
         animator.SetTrigger("Die");
         Invoke(nameof(ShowGameOverPanel), 2f);
     }
