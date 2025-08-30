@@ -69,7 +69,7 @@ class HorseAnimationController : MonoBehaviour
         // adjusts playing speed based on selected difficulty
         if (GameManager.CurrentDifficulty == Difficulty.Easy)
         {
-            splineTraveler.TravelSpeed = 12f;
+            splineTraveler.TravelSpeed = 15f;
             if (laneSwitcher != null) laneSwitcher.SwitchDuration = 0.5f;
         }
         else if (GameManager.CurrentDifficulty == Difficulty.Hard)
