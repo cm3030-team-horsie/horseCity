@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
+using HorseCity.Core;
 
 public class ResultsUI : MonoBehaviour
 {
@@ -45,5 +47,17 @@ public class ResultsUI : MonoBehaviour
             applesCollectedText.text = $"<sprite name=apple> {applesCollected}";
 
         Debug.Log($"[ResultsUI] Showing results → Apples={applesCollected}, Rank={rank}");
+    }
+
+    public void OnMainMenuButton()
+    {
+        // reset the GameState back to WaitingToStart
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.SetGameState(GameState.WaitingToStart);
+        }
+
+        // load the Main Menu scene
+        SceneManager.LoadScene("MainMenu"); // make sure this matches your scene name
     }
 }
