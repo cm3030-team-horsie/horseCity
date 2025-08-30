@@ -6,7 +6,6 @@ using UnityEngine.InputSystem;
 // Difficulty options
 public enum Difficulty { Easy, Hard }
 
-// Singleton GameManager
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
@@ -16,7 +15,7 @@ public class GameManager : MonoBehaviour
     private GameState currentState;
     private InputActions inputActions;
 
-    // 👇 store current difficulty (default Easy)
+    // store difficulties
     public static Difficulty CurrentDifficulty { get; private set; } = Difficulty.Easy;
 
     void Awake()

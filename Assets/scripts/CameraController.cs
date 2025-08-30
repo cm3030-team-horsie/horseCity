@@ -24,7 +24,7 @@ public class CameraController : MonoBehaviour
         cam = GetComponent<Camera>();
         cam.orthographic = false;
 
-        // Store the original transform (set in inspector)
+        // store original transform/position
         originalPosition = transform.position;
         originalRotation = transform.rotation;
     }
@@ -77,7 +77,7 @@ public class CameraController : MonoBehaviour
         Vector3 targetPosition = CalculateCameraPosition();
         transform.position = Vector3.Lerp(transform.position, targetPosition, followSpeed * Time.deltaTime);
 
-        // Calculate rotation to look at player
+        // calc rotation to look at the player
         Vector3 lookDirection = (player.position - transform.position).normalized;
         Quaternion targetRotation = Quaternion.LookRotation(lookDirection);
 

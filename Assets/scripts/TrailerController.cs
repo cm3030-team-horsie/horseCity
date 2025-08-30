@@ -10,17 +10,14 @@ public class TrailerController : MonoBehaviour
         animator = GetComponent<Animator>();
     }
 
-    // Unity lifecycle method. Automatically called when script- or game object is enabled
     void OnEnable()
     {
-        // Setup event listener
+        // sets up event listener
         GameManager.OnGameStateChanged += HandleGameStateChanged;
     }
 
-    // Unity lifecycle method. Automatically called when script- or game object is disabled
     void OnDisable()
     {
-        // Tear down event listener
         GameManager.OnGameStateChanged -= HandleGameStateChanged;
     }
 

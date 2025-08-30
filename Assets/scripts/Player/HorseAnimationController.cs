@@ -3,6 +3,7 @@ using HorseCity.Core;
 
 class HorseAnimationController : MonoBehaviour
 {
+    // other scripts needed ofr horse movement
     private Animator animator;
     private SplineTraveler splineTraveler;
     private PlayerInputHandler playerInputHandler;
@@ -50,11 +51,12 @@ class HorseAnimationController : MonoBehaviour
 
         playerInputHandler.OnJumpPerformed += OnJumpPerformed;
 
+        // listen for when horse dies
         if (LivesCounter.Instance != null)
             LivesCounter.Instance.OnGameOver += PlayDeathAnimation;
 
-        if (showDebugInfo)
-            InvokeRepeating("LogCurrentAnimation", 0f, 1f);
+        //if (showDebugInfo)
+        //    InvokeRepeating("LogCurrentAnimation", 0f, 1f);
 
         currentSpeed = animator.GetFloat("Speed");
         targetSpeed = currentSpeed;
@@ -64,6 +66,7 @@ class HorseAnimationController : MonoBehaviour
 
     private void ApplyDifficultySettings()
     {
+        // adjusts playing speed based on selected difficulty
         if (GameManager.CurrentDifficulty == Difficulty.Easy)
         {
             splineTraveler.TravelSpeed = 12f;
@@ -80,6 +83,7 @@ class HorseAnimationController : MonoBehaviour
     {
         Debug.Log("[HorseAnimationController] Level complete → reached meadow.");
 
+        // stop horse
         splineTraveler.StopMoving();
         animator.SetFloat("Speed", 0f);
 
@@ -115,6 +119,7 @@ class HorseAnimationController : MonoBehaviour
     public void LogCurrentAnimation()
     {
         if (!showDebugInfo) return;
+        // log active animation
         AnimatorStateInfo state = animator.GetCurrentAnimatorStateInfo(0);
         string name = state.IsName("Idle") ? "Idle" :
                       state.IsName("Gait") ? "Gait" :
@@ -125,6 +130,7 @@ class HorseAnimationController : MonoBehaviour
 
     private void PlayDeathAnimation()
     {
+        // stop movemement
         if (splineTraveler != null)
         {
             splineTraveler.StopMoving();
@@ -139,13 +145,13 @@ class HorseAnimationController : MonoBehaviour
             audioSource.Stop();
         }
 
-        // stop level traffic audio
+        // stop level traffic audio when horsed dies
         if (levelTrafficSound != null && levelTrafficSound.isPlaying)
         {
             levelTrafficSound.Stop();
         }
 
-        // stop the cars
+        // stop the cars when horse dies
         GameManager.Instance.SetGameState(GameState.GameOver);
 
         animator.SetTrigger("Die");
@@ -160,9 +166,11 @@ class HorseAnimationController : MonoBehaviour
 
     private void OnStartedMoving(SplineTraveler traveler)
     {
+        // bang sound when trailer opens
         if (openTrailerSound != null) audioSource?.PlayOneShot(openTrailerSound);
         if (gallopingSound != null)
         {
+            // delay gallopiing sound until bang is complete
             float delay = openTrailerSound != null ? openTrailerSound.length : 0f;
             Invoke(nameof(StartGallopingSound), delay);
         }
@@ -171,6 +179,7 @@ class HorseAnimationController : MonoBehaviour
 
     private void StartGallopingSound()
     {
+        // start looping galloping sound
         if (gallopingSound != null && audioSource != null)
         {
             audioSource.clip = gallopingSound;
@@ -189,6 +198,7 @@ class HorseAnimationController : MonoBehaviour
 
     private void StartSpeedTransition(float newTargetSpeed, float newTransitionDuration)
     {
+        // smooths movement
         targetSpeed = newTargetSpeed;
         transitionDuration = newTransitionDuration;
         isTransitioning = true;
@@ -204,6 +214,7 @@ class HorseAnimationController : MonoBehaviour
 
     private void OnJumpPerformed()
     {
+        // trigger the jumps
         if (!isJumping) StartCoroutine(JumpBoost());
         if (jumpSound != null) audioSource?.PlayOneShot(jumpSound);
     }
@@ -216,6 +227,7 @@ class HorseAnimationController : MonoBehaviour
         float elapsed = 0f;
         float baseY = transform.position.y;
 
+        // give a jump boots when the horse is in the air jumping
         while (elapsed < jumpDuration)
         {
             elapsed += Time.deltaTime;

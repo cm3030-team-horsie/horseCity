@@ -101,7 +101,7 @@ public class CarController : MonoBehaviour
         }
         else
         {
-            // Fallback: just destroy at the very end
+            // destroy at the end
             Destroy(gameObject);
         }
     }
@@ -141,11 +141,11 @@ public class CarController : MonoBehaviour
     {
         if (GameManager.CurrentDifficulty == Difficulty.Easy)
         {
-            splineTraveler.TravelSpeed = 9f;  // easy level car speed
+            splineTraveler.TravelSpeed = 9f;  // easy level speed
         }
         else if (GameManager.CurrentDifficulty == Difficulty.Hard)
         {
-            splineTraveler.TravelSpeed = 14f; // hard level car speed
+            splineTraveler.TravelSpeed = 14f; // hard level speed
         }
     }
 }
