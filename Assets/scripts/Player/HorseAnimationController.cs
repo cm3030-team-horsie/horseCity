@@ -9,8 +9,8 @@ class HorseAnimationController : MonoBehaviour
     private LaneSwitcher laneSwitcher;
 
     [Header("UI References")]
-    [SerializeField] private GameOverUI gameOverUI;
-    [SerializeField] private ResultsUI resultsUI;   // 👈 new reference for results
+    [SerializeField] private GameOverUI gameOverUI; // gameOver Ui panel
+    [SerializeField] private ResultsUI resultsUI;   // results UI panel
 
     [SerializeField] public bool showDebugInfo = false;
 
