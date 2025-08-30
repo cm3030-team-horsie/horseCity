@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using HorseCity.Core;
 
 public class LivesCounter : MonoBehaviour
 {
@@ -23,6 +24,24 @@ public class LivesCounter : MonoBehaviour
         currentLives = startLives;
     }
 
+    private void OnEnable()
+    {
+        GameManager.OnGameStateChanged += HandleGameStateChanged;
+    }
+
+    private void OnDisable()
+    {
+        GameManager.OnGameStateChanged -= HandleGameStateChanged;
+    }
+
+    private void HandleGameStateChanged(GameState state)
+    {
+        if (state == GameState.WaitingToStart)
+        {
+            ResetLives();
+        }
+    }
+
     public void DeductLife()
     {
         currentLives = Mathf.Max(0, currentLives - 1);
@@ -38,6 +57,13 @@ public class LivesCounter : MonoBehaviour
     public int GetLives()
     {
         return currentLives;
+    }
+
+    public void ResetLives()
+    {
+        currentLives = startLives;
+        OnLivesChanged?.Invoke(currentLives);
+        Debug.Log($"Lives reset to {currentLives}");
     }
 }
 
