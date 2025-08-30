@@ -46,7 +46,7 @@ class HorseAnimationController : MonoBehaviour
     {
         splineTraveler.OnStartedMoving += OnStartedMoving;
         splineTraveler.OnStoppedMoving += OnStoppedMoving;
-        splineTraveler.OnReachedPathEnd += OnLevelComplete;   // 👈 listen for end of spline
+        splineTraveler.OnReachedPathEnd += OnLevelComplete;
 
         playerInputHandler.OnJumpPerformed += OnJumpPerformed;
 
@@ -66,12 +66,12 @@ class HorseAnimationController : MonoBehaviour
     {
         if (GameManager.CurrentDifficulty == Difficulty.Easy)
         {
-            splineTraveler.TravelSpeed = 10f;
+            splineTraveler.TravelSpeed = 12f;
             if (laneSwitcher != null) laneSwitcher.SwitchDuration = 0.5f;
         }
         else if (GameManager.CurrentDifficulty == Difficulty.Hard)
         {
-            splineTraveler.TravelSpeed = 20f;
+            splineTraveler.TravelSpeed = 18f;
             if (laneSwitcher != null) laneSwitcher.SwitchDuration = 1.0f;
         }
     }
@@ -82,6 +82,16 @@ class HorseAnimationController : MonoBehaviour
 
         splineTraveler.StopMoving();
         animator.SetFloat("Speed", 0f);
+
+        // stop vehicles at the end of the level
+        GameManager.Instance.SetGameState(GameState.GameOver);
+
+        // destreoy left over vehicles in scene
+        var allCars = FindObjectsOfType<CarController>();
+        foreach (var car in allCars)
+        {
+            Destroy(car.gameObject);
+        }
 
         // get apples collected from AppleCounter
         int applesCollected = AppleCounter.Apples;
