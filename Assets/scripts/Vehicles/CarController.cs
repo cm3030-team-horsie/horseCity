@@ -9,6 +9,9 @@ public class CarController : MonoBehaviour
     [Header("Path Following")]
     [SerializeField] private bool followNextPath = true;
 
+    [SerializeField, Range(0f, 1f)]
+    private float destroyThreshold = 0.95f;
+
     private SplineTraveler splineTraveler;
 
     private void Awake()
@@ -40,6 +43,19 @@ public class CarController : MonoBehaviour
 
             // apply difficulty speeds
             ApplyDifficultySettings();
+        }
+    }
+
+    private void Update()
+    {
+        // destroy the cars % way on road - set it in inspector
+        if (splineTraveler != null && splineTraveler.SplinePath != null)
+        {
+            float totalLength = splineTraveler.SplinePath.GetTotalLength();
+            if (splineTraveler.CurrentDistance >= totalLength * destroyThreshold)
+            {
+                Destroy(gameObject);
+            }
         }
     }
 
@@ -85,15 +101,8 @@ public class CarController : MonoBehaviour
         }
         else
         {
-            // destroy the car slightly before the end of the road
-            float totalLength = splineTraveler.SplinePath.GetTotalLength();
-            float currentDistance = splineTraveler.CurrentDistance;
-
-            // 90% of the way of the path
-            if (currentDistance >= totalLength * 0.90f)
-            {
-                Destroy(gameObject);
-            }
+            // Fallback: just destroy at the very end
+            Destroy(gameObject);
         }
     }
 
