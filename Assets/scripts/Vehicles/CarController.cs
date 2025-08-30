@@ -85,10 +85,18 @@ public class CarController : MonoBehaviour
         }
         else
         {
-            // destroy the car at the end of the road
-            Destroy(gameObject);
+            // destroy the car slightly before the end of the road
+            float totalLength = splineTraveler.SplinePath.GetTotalLength();
+            float currentDistance = splineTraveler.CurrentDistance;
+
+            // 90% of the way of the path
+            if (currentDistance >= totalLength * 0.90f)
+            {
+                Destroy(gameObject);
+            }
         }
     }
+
 
     private void OnReachedPathStart(SplineTraveler traveler)
     {
