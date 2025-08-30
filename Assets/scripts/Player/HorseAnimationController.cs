@@ -93,6 +93,18 @@ class HorseAnimationController : MonoBehaviour
             Destroy(car.gameObject);
         }
 
+        // stop gallopping audio when the horse dies
+        if (audioSource != null && audioSource.clip == gallopingSound && audioSource.isPlaying)
+        {
+            audioSource.Stop();
+        }
+
+        // stop level traffic audio
+        if (levelTrafficSound != null && levelTrafficSound.isPlaying)
+        {
+            levelTrafficSound.Stop();
+        }
+
         // get apples collected from AppleCounter
         int applesCollected = AppleCounter.Apples;
 
