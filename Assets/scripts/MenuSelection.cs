@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using HorseCity.Core;
 
 public class MenuSelection : MonoBehaviour
 {
@@ -9,23 +10,39 @@ public class MenuSelection : MonoBehaviour
 
     public void StartEasyLevel()
     {
-        GameManager.SetDifficulty(Difficulty.Easy);   // set difficulty
+        if (GameManager.Instance)
+        {
+            GameManager.SetDifficulty(Difficulty.Easy); // set difficulty
+            GameManager.Instance.SetGameState(GameState.WaitingToStart);
+        }
         StartCoroutine(LoadSceneWithDelay("EasyLevel"));
     }
 
     public void StartHardLevel()
     {
-        GameManager.SetDifficulty(Difficulty.Hard); // set difficulty
+        if (GameManager.Instance)
+        {
+            GameManager.SetDifficulty(Difficulty.Hard); // set difficulty
+            GameManager.Instance.SetGameState(GameState.WaitingToStart);
+        }
         StartCoroutine(LoadSceneWithDelay("HardLevel"));
     }
 
     public void LoadMainMenu()
     {
+        if (GameManager.Instance)
+        {
+            GameManager.Instance.SetGameState(GameState.InMenu);
+        }
         StartCoroutine(LoadSceneWithDelay("MainMenu"));
     }
 
     public void LoadInstructions()
     {
+        if (GameManager.Instance)
+        {
+            GameManager.Instance.SetGameState(GameState.InMenu);
+        }
         StartCoroutine(LoadSceneWithDelay("Instructions"));
     }
 

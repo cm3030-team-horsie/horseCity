@@ -25,6 +25,7 @@ public class GameManager : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
             Debug.Log("[GameManager] Instance created");
+            Instance.SetGameState(GameState.WaitingToStart);
         }
         else
         {
